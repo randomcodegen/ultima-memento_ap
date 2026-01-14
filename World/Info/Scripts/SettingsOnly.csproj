@@ -31,10 +31,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Source\System\System.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Remove="*.cs"></Compile>
     <Compile Include="Settings.cs" />
   </ItemGroup>

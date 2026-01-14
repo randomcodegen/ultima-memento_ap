@@ -30,8 +30,17 @@ namespace Server.Mobiles
 
 		public override void InitSBInfo( Mobile m )
 		{
-			m_SBInfos.Add( new StoreMerchant() ); 
-		}
+            Type type = ScriptCompiler.FindTypeByName("Server.Mobiles.StoreMerchant");
+
+            if (type != null)
+            {
+                m_SBInfos.Add((SBInfo)Activator.CreateInstance(type));
+            }
+            else
+            {
+                Console.WriteLine("Warning: StoreMerchant type was not found.");
+            }
+        }
 
 		public Merchant( Serial serial ) : base( serial )
 		{
