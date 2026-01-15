@@ -44,6 +44,7 @@ namespace Server.Mobiles
 					ItemInformation.GetSellList( m_Merchant, this, 	ItemSalesInfo.Category.Armor,		ItemSalesInfo.Material.Wood,		ItemSalesInfo.Market.All,			ItemSalesInfo.World.None,	null	 );
 					ItemInformation.GetSellList( m_Merchant, this, 	ItemSalesInfo.Category.Shield,		ItemSalesInfo.Material.Wood,		ItemSalesInfo.Market.All,			ItemSalesInfo.World.None,	null	 );
 					ItemInformation.GetSellList( m_Merchant, this, 	ItemSalesInfo.Category.Weapon,		ItemSalesInfo.Material.Wood,		ItemSalesInfo.Market.All,			ItemSalesInfo.World.None,	null	 );
+					ItemInformation.GetSellList( m_Merchant, this,  ItemSalesInfo.Category.Weapon,		ItemSalesInfo.Material.Metal,		ItemSalesInfo.Market.Carpenter,		ItemSalesInfo.World.None,	null	 );
 					ItemInformation.GetSellList( m_Merchant, this, 	ItemSalesInfo.Category.Resource,	ItemSalesInfo.Material.None,		ItemSalesInfo.Market.Carpenter,		ItemSalesInfo.World.None,	null	 );
 					ItemInformation.GetSellList( m_Merchant, this, 	ItemSalesInfo.Category.Rare,		ItemSalesInfo.Material.None,		ItemSalesInfo.Market.Carpenter,		ItemSalesInfo.World.None,	null	 );
 				}
@@ -59,6 +60,7 @@ namespace Server.Mobiles
 					ItemInformation.GetBuysList( m_Merchant, this, 	ItemSalesInfo.Category.Weapon,		ItemSalesInfo.Material.Wood,		ItemSalesInfo.Market.All,			ItemSalesInfo.World.None,	null	 );
 					ItemInformation.GetBuysList( m_Merchant, this, 	ItemSalesInfo.Category.Resource,	ItemSalesInfo.Material.None,		ItemSalesInfo.Market.Carpenter,		ItemSalesInfo.World.None,	null	 );
 					ItemInformation.GetBuysList( m_Merchant, this, 	ItemSalesInfo.Category.Rare,		ItemSalesInfo.Material.None,		ItemSalesInfo.Market.Carpenter,		ItemSalesInfo.World.None,	null	 );
+					ItemInformation.GetBuysList( m_Merchant, this,	ItemSalesInfo.Category.Weapon,		ItemSalesInfo.Material.Metal,		ItemSalesInfo.Market.Carpenter,		ItemSalesInfo.World.None,	null	 );
 				}
 			}
 		}

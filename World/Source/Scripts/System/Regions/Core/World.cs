@@ -559,13 +559,13 @@ namespace Server.Misc
 				return false;
 
 			if ( reg.IsPartOf( "the Island of Stonegate" ) )
-				return false;
+				return true;
 
 			if ( reg.IsPartOf( "the Painting of the Glade" ) )
 				return false;
 
 			if ( reg.IsPartOf( "the Island of the Black Knight" ) )
-				return false;
+				return true;
 
 			if ( reg.IsPartOf( "the Castle of the Black Knight" ) )
 				return false;
@@ -583,7 +583,7 @@ namespace Server.Misc
 				return false;
 
 			if ( reg.IsPartOf( "the Island of Poseidon" ) )
-				return false;
+				return true;
 
 			if ( reg.IsPartOf( "the Village of Ravendark" ) )
 				return false;

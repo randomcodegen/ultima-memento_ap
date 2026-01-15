@@ -1,5 +1,6 @@
 using System;
 using Server;
+using System.Linq;
 
 namespace Server.Items
 {
@@ -19,7 +20,11 @@ namespace Server.Items
 
 		public override bool OnDragDropInto( Mobile from, Item dropped, Point3D p )
         {
-			if ( dropped is Container && !(dropped is AlchemyPouch) )
+			if (dropped is NotIdentified && dropped.Items.First().Catalog == Catalogs.Reagent)
+            {
+                return base.OnDragDropInto(from, dropped, p);
+            }
+            else if ( dropped is Container && !(dropped is AlchemyPouch))
 			{
                 from.SendMessage("You can only use another alchemy rucksack within this sack.");
                 return false;
@@ -42,7 +47,11 @@ namespace Server.Items
 
 		public override bool OnDragDrop( Mobile from, Item dropped )
         {
-			if ( dropped is Container && !(dropped is AlchemyPouch) )
+			if (dropped is NotIdentified && dropped.Items.First().Catalog == Catalogs.Reagent)
+            {
+                return base.OnDragDrop(from, dropped);
+            }
+            else if ( dropped is Container && !(dropped is AlchemyPouch) )
 			{
                 from.SendMessage("You can only use another alchemy rucksack within this sack.");
                 return false;
@@ -84,20 +93,33 @@ namespace Server.Items
 
 		public override int GetTotal(TotalType type)
         {
-			if (type != TotalType.Weight)
-				return base.GetTotal(type);
-			else
+			// 1/20 weight ratio
+			if (type == TotalType.Weight)
+            {
+                return (int)(TotalItemWeights() * (0.05));
+            }
+			// presenting as a single item so the variety of ingredients doesn't max out your item stack limit
+			else if (type == TotalType.Items)
 			{
-				return (int)(TotalItemWeights() * (0.05));
+				return 1;
 			}
+            else
+            {
+                return base.GetTotal(type);
+            }
         }
 
 		public override void UpdateTotal(Item sender, TotalType type, int delta)
         {
-            if (type != TotalType.Weight)
-                base.UpdateTotal(sender, type, delta);
-            else
+            if (type == TotalType.Weight)
+            {
                 base.UpdateTotal(sender, type, (int)(delta * (0.05)));
+            }
+			else if (type == TotalType.Gold)
+			{
+				base.UpdateTotal(sender, type, delta);
+			}
+			// don't update items count, it should stay at 1
         }
 
 		private double TotalItemWeights()

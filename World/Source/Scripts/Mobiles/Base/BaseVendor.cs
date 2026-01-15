@@ -12,6 +12,7 @@ using Server.Targeting;
 using Server.Engines.GlobalShoppe;
 using Server.Utilities;
 using System.Linq;
+using Server.Commands;
 
 namespace Server.Mobiles
 {
@@ -160,6 +161,10 @@ namespace Server.Mobiles
 			}
 		}
 
+		static BaseVendor()
+		{
+            CommandSystem.Register("ReloadSales", AccessLevel.GameMaster, new CommandEventHandler(ReloadSales_OnCommand));
+        }
 		public BaseVendor( string title ) : base( AIType.AI_Vendor, FightMode.Closest, 15, 1, 0.1, 0.2 )
 		{
 			this.Title = title;
@@ -285,6 +290,14 @@ namespace Server.Mobiles
 					from.SendMessage(message);
 			}
 
+			// Guildmasters get a separate minimum and a bonus if they're lucky (1 in 3, assuming an even distribution from RandomMinMax)
+            if (vendor is BaseGuildmaster)
+            {
+                if (newCoins < ((int)(maxGold * 0.66)))
+                    newCoins = ((int)(maxGold * 0.66));
+                else
+                    newCoins = ((int)(newCoins * 1.5));
+            }
 			if ( !vendor.SetCoinPurse( from, newCoins ) ) return 0; // Unexpected case
 
 			if ( vendor.m_CoinsNeedReset )
@@ -454,7 +467,21 @@ namespace Server.Mobiles
 			}
 		}
 
-		public virtual bool GetGender()
+		// this command has to live here in order to hot-reload vendor sales info
+        [Usage("ReloadSales")]
+        [Description("Discards and reloads all of the Item sales data.")]
+        private static void ReloadSales_OnCommand(CommandEventArgs e)
+        {
+            Console.WriteLine("Reloading economic information.");
+            // TODO: Implement
+			/*
+            // grab sellinfo from ItemSales.cs and reload it somehow
+            foreach (BaseVendor mobile in World.Mobiles.Values.Where(mob => mob is BaseVendor))
+            {
+				mobile.LoadSBInfo();
+            }*/
+        }
+        public virtual bool GetGender()
 		{
 			return Utility.RandomBool();
 		}
@@ -1129,8 +1156,12 @@ namespace Server.Mobiles
 					{
 						LockableContainer parentcon = item.ParentEntity as LockableContainer;
 
-						if ( item is Container && ( (Container)item ).Items.Count != 0 )
-							continue;
+						bool isFilledContainer = item is Container c && c.Items.Count > 0;
+						bool isBoardCollection    = item is BaseBoard b && b.Items.All(i => i is BasePiece);
+						
+						// Skip filled containers unless they are specifically a board of pieces
+						if (isFilledContainer && !isBoardCollection)
+						    continue;
 
 						if ( parentcon != null && parentcon.Locked == true )
 							continue;
@@ -2049,8 +2080,20 @@ namespace Server.Mobiles
 
 			foreach ( SellItemResponse resp in list )
 			{
-				if ( resp.Item.RootParent != seller || resp.Amount <= 0 || !resp.Item.IsStandardLoot() || !resp.Item.Movable || ( resp.Item is Container && ( (Container)resp.Item ).Items.Count != 0 ) )
-					continue;
+				var item = resp.Item;
+
+				if (item.RootParent != seller || resp.Amount <= 0)
+				    continue;
+				
+				if (!item.IsStandardLoot() || !item.Movable)
+				    continue;
+				
+				// Check for non-empty containers (ignoring valid game boards)
+				bool isFilledContainer = item is Container c && c.Items.Count > 0;
+				bool isValidBoard         = item is BaseBoard b && b.Items.All(i => i is BasePiece);
+				
+				if (isFilledContainer && !isValidBoard)
+				    continue;
 
 				foreach ( IShopSellInfo ssi in info )
 				{
@@ -2087,8 +2130,19 @@ namespace Server.Mobiles
 
 			foreach ( SellItemResponse resp in list )
 			{
-				if ( resp.Item.RootParent != seller || resp.Amount <= 0 || !resp.Item.IsStandardLoot() || !resp.Item.Movable || ( resp.Item is Container && ( (Container)resp.Item ).Items.Count != 0 ) )
-					continue;
+				var resp_item = resp.Item;
+
+				if (resp_item.RootParent != seller || resp.Amount <= 0)
+				    continue;
+				
+				if (!resp_item.IsStandardLoot() || !resp_item.Movable)
+				    continue;
+
+				bool isFilledContainer = resp_item is Container c && c.Items.Count > 0;
+				bool isValidBoard      = resp_item is BaseBoard b && b.Items.All(i => i is BasePiece);
+				
+				if (isFilledContainer && !isValidBoard)
+    			continue;
 
 				if ( isBegging ) // LET US SEE IF THEY ARE BEGGING
 				{
@@ -2660,7 +2714,11 @@ namespace Server.Mobiles
 							m_Vendor.SayTo(from, "I cannot really tell you much about that." );
 							return;
 						}
-
+						// If the item is worth less than the identify cost, adjust the identify price to be 0.5 of the sell value
+						if (examine.CoinPrice < nCost) {
+							nCost = (int)Math.Round(examine.CoinPrice * 0.5);
+                            m_Vendor.SayTo(from, "This item is not worth much. I will identify it for " + nCost.ToString() + " gold.");
+						}
 						Container packs = from.Backpack;
 
 						if ( BeggingPose(from) > 0 && !(m_Vendor is PlayerBarkeeper) ) // LET US SEE IF THEY ARE BEGGING
