@@ -1156,11 +1156,14 @@ namespace Server.Mobiles
 					{
 						LockableContainer parentcon = item.ParentEntity as LockableContainer;
 
-						bool isFilledContainer = item is Container c && c.Items.Count > 0;
-						bool isBoardCollection    = item is BaseBoard b && b.Items.All(i => i is BasePiece);
-						
-						// Skip filled containers unless they are specifically a board of pieces
-						if (isFilledContainer && !isBoardCollection)
+                        Container c = item as Container;
+                        bool isFilledContainer = (c != null && c.Items.Count > 0);
+
+                        BaseBoard b = item as BaseBoard;
+                        bool isBoardCollection = (b != null && b.Items.All(i => i is BasePiece));
+
+                        // Skip filled containers unless they are specifically a board of pieces
+                        if (isFilledContainer && !isBoardCollection)
 						    continue;
 
 						if ( parentcon != null && parentcon.Locked == true )
@@ -2087,12 +2090,15 @@ namespace Server.Mobiles
 				
 				if (!item.IsStandardLoot() || !item.Movable)
 				    continue;
-				
-				// Check for non-empty containers (ignoring valid game boards)
-				bool isFilledContainer = item is Container c && c.Items.Count > 0;
-				bool isValidBoard         = item is BaseBoard b && b.Items.All(i => i is BasePiece);
-				
-				if (isFilledContainer && !isValidBoard)
+
+                // Check for non-empty containers (ignoring valid game boards)
+                Container c = item as Container;
+                bool isFilledContainer = (c != null && c.Items.Count > 0);
+
+                BaseBoard b = item as BaseBoard;
+                bool isValidBoard = (b != null && b.Items.All(i => i is BasePiece));
+
+                if (isFilledContainer && !isValidBoard)
 				    continue;
 
 				foreach ( IShopSellInfo ssi in info )
@@ -2138,10 +2144,13 @@ namespace Server.Mobiles
 				if (!resp_item.IsStandardLoot() || !resp_item.Movable)
 				    continue;
 
-				bool isFilledContainer = resp_item is Container c && c.Items.Count > 0;
-				bool isValidBoard      = resp_item is BaseBoard b && b.Items.All(i => i is BasePiece);
-				
-				if (isFilledContainer && !isValidBoard)
+                Container rc = resp_item as Container;
+                bool isFilledContainer = (rc != null && rc.Items.Count > 0);
+
+                BaseBoard rb = resp_item as BaseBoard;
+                bool isValidBoard = (rb != null && rb.Items.All(i => i is BasePiece));
+
+                if (isFilledContainer && !isValidBoard)
     			continue;
 
 				if ( isBegging ) // LET US SEE IF THEY ARE BEGGING
