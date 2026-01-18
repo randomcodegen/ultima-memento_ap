@@ -26,11 +26,14 @@ namespace Server.Misc
 			builder.Append("- Craft - Ranger Armor and Hide Chests can now be enhanced<br>");
 			builder.Append("- Gather - Mining for Sand is notably faster<br>");
 			builder.Append("- Gump - Elemental spell commands are now shown on their respective pages<br>");
+			builder.Append("- Gump - Craft Skill List now shows a lock icon for items you don't know the recipe for<br>");
 			builder.Append("- Item - Tablets no longer have a tooltip indicating their worth<br>");
 			builder.Append("- Item - Normal and Greater Strength Potions bonuses have been reduced<br>");
 			builder.Append("- Item - The book of jokes now has a description<br>");
 			builder.Append("- Item - Reduced Gladiator's Collar stats and increased strength requirement<br>");
 			builder.Append("- Item - [Organize containers now allow you to place items in them<br>");
+			builder.Append("- Item - Ghost Ship Anchor now weighs 80, down from 200<br>");
+			builder.Append("- Item - Reduced weight of bottles and jars to 0.5 stones each, down from 1<br>");
 			builder.Append("- Misc - Boat movement is no longer blocked by corpses<br>");
 			builder.Append("- Misc - Corpses can no longer be looted while it would cause a criminal action<br>");
 			builder.Append("- Misc - Combat is now prevented in starting zones and Jail<br>");
@@ -41,6 +44,7 @@ namespace Server.Misc
 			builder.Append("- Misc - Permadeath characters now get a warning that Soul Orbs cannot be created<br>");
 			builder.Append("- Misc - Training skills from the Vendor now refunds excess gold<br>");
 			builder.Append("- Misc - Players now fully log out after 30 seconds, down from 5 minutes<br>");
+			builder.Append("- Mobs - Rocs and Roclings are now treated as Birds instead of Dragons<br>");
 			builder.Append("- Pets - Required taming skill is no longer reduced when leveling<br>");
 			builder.Append("- Pets - Pets will now auto-bond every time they level up to 3 or higher<br>");
 			builder.Append("- Quest - 'Seeking Brave Adventurers' quests are now more likely to be challenging<br>");
@@ -51,6 +55,7 @@ namespace Server.Misc
 			builder.Append("- Setting - Creature Magic setting is now always visible and notes you must be in the Tavern<br>");
 			builder.Append("- Setting - Changing to a Human race now warns players that it is one-way and permanent<br>");
 			builder.Append("- Spell - Remove Curse and Hag Hand now have failure messages when failing on cursed items<br>");
+			builder.Append("- Spell - Blade Spirits and Elemental Fiend now have a shorter cast delay<br>");
 			builder.Append("- Temptation - Permadeath characters now automatically receive a soul orb<br>");
 
 			builder.Append("<br>");
@@ -58,6 +63,7 @@ namespace Server.Misc
 			builder.Append("- Gump - LRC/LMC now show uncapped values on [Status gump<br>");
 			builder.Append("- Gump - Fix issue where using DK1 gump would close DK2 spell bars<br>");
 			builder.Append("- Item - Knightship and Death Knight books now properly require appropriate skills/karma to equip<br>");
+			builder.Append("- Item - Fix crash from summon items if owner was deleted<br>");
 			builder.Append("- Misc - Fixed an issue where unsecured items near a house were inaccessible<br>");
 			builder.Append("- Misc - Fix typo in logged death message<br>");
 			builder.Append("- Misc - Fix issue where monsters only dropped gold coins and not other currencies<br>");
