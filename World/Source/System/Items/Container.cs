@@ -1410,8 +1410,8 @@ namespace Server.Items
 			UpdateContainerData();
 		}
 
-		private static int m_GlobalMaxItems = 125;
-		private static int m_GlobalMaxWeight = 550;
+		private static int m_GlobalMaxItems = 250;
+		private static int m_GlobalMaxWeight = 750;
 
 		public static int GlobalMaxItems{ get{ return m_GlobalMaxItems; } set{ m_GlobalMaxItems = value; } }
 		public static int GlobalMaxWeight{ get{ return m_GlobalMaxWeight; } set{ m_GlobalMaxWeight = value; } }

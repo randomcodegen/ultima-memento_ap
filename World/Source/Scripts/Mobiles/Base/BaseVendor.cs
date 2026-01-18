@@ -1,18 +1,18 @@
+using Server.Commands;
+using Server.ContextMenus;
+using Server.Engines.GlobalShoppe;
+using Server.Items;
+using Server.Misc;
+using Server.Mobiles;
+using Server.Multis;
+using Server.Network;
+using Server.Regions;
+using Server.Targeting;
+using Server.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Server.Items;
-using Server.Network;
-using Server.ContextMenus;
-using Server.Mobiles;
-using Server.Misc;
-using Server.Regions;
-using Server.Multis;
-using Server.Targeting;
-using Server.Engines.GlobalShoppe;
-using Server.Utilities;
 using System.Linq;
-using Server.Commands;
 
 namespace Server.Mobiles
 {
@@ -161,10 +161,6 @@ namespace Server.Mobiles
 			}
 		}
 
-		static BaseVendor()
-		{
-            CommandSystem.Register("ReloadSales", AccessLevel.GameMaster, new CommandEventHandler(ReloadSales_OnCommand));
-        }
 		public BaseVendor( string title ) : base( AIType.AI_Vendor, FightMode.Closest, 15, 1, 0.1, 0.2 )
 		{
 			this.Title = title;
@@ -467,20 +463,31 @@ namespace Server.Mobiles
 			}
 		}
 
-		// this command has to live here in order to hot-reload vendor sales info
-        [Usage("ReloadSales")]
-        [Description("Discards and reloads all of the Item sales data.")]
-        private static void ReloadSales_OnCommand(CommandEventArgs e)
+        public static void ReloadAllVendors()
         {
-            Console.WriteLine("Reloading economic information.");
-            // TODO: Implement
-			/*
-            // grab sellinfo from ItemSales.cs and reload it somehow
-            foreach (BaseVendor mobile in World.Mobiles.Values.Where(mob => mob is BaseVendor))
+            ItemSalesInfo.LoadFromDisk();
+
+            var vendors = World.Mobiles.Values.OfType<BaseVendor>().ToList();
+            foreach (var vendor in vendors)
             {
-				mobile.LoadSBInfo();
-            }*/
+                if (vendor == null || vendor.Deleted) continue;
+
+                vendor.SBInfos.Clear();
+                vendor.m_ArmorBuyInfo.Clear();
+                vendor.m_ArmorSellInfo.Clear();
+
+                vendor.InitSBInfo(vendor);
+
+                for (int i = 0; i < vendor.SBInfos.Count; i++)
+                {
+                    SBInfo sbInfo = (SBInfo)vendor.SBInfos[i];
+                    vendor.m_ArmorBuyInfo.AddRange(sbInfo.BuyInfo);
+                    vendor.m_ArmorSellInfo.Add(sbInfo.SellInfo);
+                }
+                vendor.Delta(MobileDelta.Attributes);
+            }
         }
+
         public virtual bool GetGender()
 		{
 			return Utility.RandomBool();
@@ -923,7 +930,7 @@ namespace Server.Mobiles
 				return;
 			}
 
-			if ( DateTime.Now - LastRestockWares > RestockWaresDelay )
+            if ( DateTime.Now - LastRestockWares > RestockWaresDelay )
 				Restock();
 
 			var _ = GetOrCreateCoinPurse( this, from ); // Lazy generate
@@ -1154,7 +1161,8 @@ namespace Server.Mobiles
 
 					foreach ( Item item in items )
 					{
-						LockableContainer parentcon = item.ParentEntity as LockableContainer;
+                        Console.WriteLine("Checking: {0}", item.Name);
+                        LockableContainer parentcon = item.ParentEntity as LockableContainer;
 
                         Container c = item as Container;
                         bool isFilledContainer = (c != null && c.Items.Count > 0);
@@ -1162,18 +1170,19 @@ namespace Server.Mobiles
                         BaseBoard b = item as BaseBoard;
                         bool isBoardCollection = (b != null && b.Items.All(i => i is BasePiece));
 
-                        // Skip filled containers unless they are specifically a board of pieces
+                        // Skip filled containers unless they are specifically a boardgame
                         if (isFilledContainer && !isBoardCollection)
 						    continue;
 
 						if ( parentcon != null && parentcon.Locked == true )
 							continue;
 
-						if ( item.IsStandardLoot() && item.Movable && ssi.IsSellable( item ) )
+                        if ( item.IsStandardLoot() && item.Movable && ssi.IsSellable( item ) )
 						{
 							PlayerMobile pm = (PlayerMobile)from;
+                            Console.WriteLine("Sellable: {0}", item.Name);
 
-							int barter = (int)from.Skills[SkillName.Mercantile].Value;
+                            int barter = (int)from.Skills[SkillName.Mercantile].Value;
 
 							int GuildMember = 0;
 

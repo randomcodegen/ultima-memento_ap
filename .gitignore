@@ -44,6 +44,8 @@ World/Data/Data.bin
 World/Data/Data.hash
 
 # Custom
+*.log
+*.bak
 Backups/
 World/Data/Obsolete
 World/Scripts/Obsolete
